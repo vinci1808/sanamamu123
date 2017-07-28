@@ -1,0 +1,41 @@
+ IDENTIFICATION DIVISION.
+ PROGRAM-ID. PROG06.
+ DATA DIVISION.
+ WORKING-STORAGE SECTION.
+ 01  A                 PIC 9(3).
+ 01  B                 PIC 9(3).
+ 01  C                 PIC 9(3).
+ 01  D                 PIC S9(3).
+ 01  E                 PIC 9(6).
+ 01  F                 PIC 9(3)V99.
+ 01  E-O               PIC $Z,ZZ,ZZ9.
+ 01  D-O               PIC -9(3).
+ 01  F-O               PIC ZZ9.99.
+ PROCEDURE DIVISION.
+     ACCEPT A
+     ACCEPT B
+     ADD A B GIVING C
+     DISPLAY '============='
+     DISPLAY 'ADDITION       ', C
+     DISPLAY '============='
+     SUBTRACT B FROM A GIVING D
+     MOVE D TO D-O
+     DISPLAY '============='.
+     DISPLAY 'SUBTRACTION    ', D-O
+     DISPLAY '============='
+     MULTIPLY A BY B GIVING E
+     MOVE E TO E-O
+     DISPLAY '============='
+     DISPLAY 'MULTIPLICATION ', E-O
+     DISPLAY '============='
+     IF B = ZERO
+       DISPLAY 'ZERO IS IN DENOMINATOR'
+       STOP RUN
+     ELSE
+     DIVIDE A BY B GIVING F
+     MOVE F TO F-O
+       DISPLAY '============='
+       DISPLAY 'DIVISION       ', F-O
+       DISPLAY '============='
+     END-IF
+     STOP RUN.

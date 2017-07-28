@@ -1,0 +1,57 @@
+WORKING-STORAGE SECTION.
+Define the 4th Heading Lines
+Use the earlier defined 3 Heading Lines, Detail Line & Total Line
+Define the necessary Variables
+01  WS-VARIABLES.
+    03  TEMP-LOC  PIC X(03) VALUE SPACES.
+    03  TEMP-TECH PIC X(05) VALUE SPACES.
+    03  TECH-TOTALS   VALUE ZERO.
+    05  Emp Count; Earnings & Deductions
+    03  LOC-TOTALS VALUE ZERO.
+    05  Emp Count; Earnings & Deductions
+PROCEDURE DIVISION.
+MAIN-PARA.
+    PERFORM INIT-PARA
+    PERFORM PROCESS-PARA  UNTIL  END-OF-FILE
+    PERFORM END-PARA
+    STOP RUN.
+INIT-PARA.
+    SORT the Input Employee-File on Loc & Tech
+    Open the Files
+    Date Time Para
+    PERFORM READ-PARA
+    MOVE EMP-LOC  TO TEMP-LOC
+    MOVE EMP-TECH TO TEMP-TECH.
+PROCESS-PARA.
+    IF EMP-LOC = TEMP-LOC
+       IF EMP-TECH = TEMP-TECH
+      NEXT SENTENCE
+       ELSE
+      PERFORM TECH-CHANGE-PARA
+       END-IF
+    ELSE
+       PERFORM TECH-CHANGE-PARA
+       PERFORM LOC-CHANGE-PARA
+    END-IF.
+    PERFORM PRINT-PARA.
+    PERFORM READ-PARA.
+PRINT-PARA.
+    Move Employee Details to DETAIL-LINE & Write it
+    Accumulate the Tech Totals (Loc Totals & Comp Totals)
+TECH-CHANGE-PARA.
+    Move Tech Totals to TOTAL-LINE & Write it.
+    Add Tech Totals to Loc Totals; Reset Tech Totals
+    MOVE EMP-TECH TO TEMP-TECH; MOVE 6 TO LINE-COUNT
+LOC-CHANGE-PARA.
+    Move Loc Totals to TOTAL-LINE & Write it.
+    Add Loc Totals to Company Totals; Reset Loc Totals
+    MOVE EMP-LOC TO TEMP-LOC.
+L1 T1 E1
+L1 T1 E2
+L1 T2 E3
+L1 T2 E4
+L2 T3 E5
+L2 T3 E6
+L2 T4 E7
+L2 T4 E8
+++++++++

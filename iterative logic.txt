@@ -1,0 +1,66 @@
+DATA DIVISION.                                 
+WORKING-STORAGE SECTION.                       
+01  WS-INPUTS                       VALUE ZERO.
+    03  WS-A           PIC 9(02).              
+    03  WS-B           PIC 9(02).              
+PROCEDURE DIVISION.
+MAIN-PARA.                                           
+    ACCEPT WS-INPUTS                                 
+    PERFORM  UNTIL  WS-INPUTS = 'XXXX'               
+       IF WS-A IS NUMERIC AND WS-B IS NUMERIC        
+          PERFORM PROCESS-PARA                       
+       ELSE                                          
+          DISPLAY 'INPUTS ARE NOT NUMERIC'           
+       END-IF                                        
+       ACCEPT WS-INPUTS                              
+    END-PERFORM.                                     
+    DISPLAY 'END OF DATA - PROGRAM ENDING. BYE BYE!!'
+    STOP RUN.
+++++++++++++++
+DATA DIVISION.                                 
+WORKING-STORAGE SECTION.                       
+01  WS-INPUTS                       VALUE ZERO.
+    03  WS-A           PIC 9(02).              
+    03  WS-B           PIC 9(02).              
+PROCEDURE DIVISION.
+MAIN-PARA.                                           
+    ACCEPT WS-INPUTS                                 
+    PERFORM  PROCESS-PARA  UNTIL  WS-INPUTS = 'XXXX'               
+    DISPLAY 'END OF DATA - PROGRAM ENDING. BYE BYE!!'
+    STOP RUN.
+PROCESS-PARA.
+    IF WS-A IS NUMERIC AND WS-B IS NUMERIC        
+    PERFORM PARA-ADD
+    THRU    PARA-DIVIDE                       
+    ELSE                                          
+    DISPLAY 'INPUTS ARE NOT NUMERIC'           
+    END-IF                                        
+    ACCEPT WS-INPUTS.                              
+=============
+DATA DIVISION.                                 
+WORKING-STORAGE SECTION.                       
+01  WS-INPUTS                       VALUE ZERO.
+    03  WS-A           PIC 9(02).              
+    03  WS-B           PIC 9(02).              
+PROCEDURE DIVISION.
+MAIN-PARA.                                           
+    PERFORM  PROCESS-PARA  UNTIL  WS-INPUTS = 'XXXX'               
+    STOP RUN.
+PROCESS-PARA.
+    ACCEPT WS-INPUTS
+    IF WS-INPUTS NOT = 'XXXX'
+       IF WS-A IS NUMERIC AND WS-B IS NUMERIC        
+      PERFORM PARA-ADD
+      THRU    PARA-DIVIDE                       
+        ELSE                                          
+       DISPLAY 'INPUTS ARE NOT NUMERIC'
+        END-IF
+    ELSE
+    DISPLAY 'END OF DATA - PROGRAM ENDING. BYE BYE!!'
+    END-IF.                                        
+=============
+//SYSIN    DD   *
+1122             
+3344             
+XXXX             
+/*

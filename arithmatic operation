@@ -1,0 +1,22 @@
+000100 IDENTIFICATION DIVISION.                                         00010000
+000200 PROGRAM-ID. PROG06.                                              00020000
+000300 DATA DIVISION.                                                   00030000
+000400 WORKING-STORAGE SECTION.                                         00040000
+000500 01  WS-A  PIC 9(02).                                             00050003
+000600 01  WS-B  PIC 9(02).                                             00060003
+000700 01  WS-C  PIC 9(02).                                             00070003
+000800 01  WS-D  PIC 9(02).                                             00080003
+000900 01  WS-E  PIC 9(02).                                             00090003
+001000 01  WS-F  PIC 9(02).                                             00100003
+001100 PROCEDURE DIVISION.                                              00110000
+001200     ACCEPT WS-A                                                  00120002
+001300     ACCEPT WS-B                                                  00130002
+001400     ADD WS-A WS-B GIVING WS-C                                    00140001
+001500     DISPLAY 'SUMC = ' , WS-C                                     00150003
+001600     SUBTRACT WS-A FROM WS-B GIVING WS-D                          00160003
+001700     DISPLAY 'SUBC = ' , WS-D                                     00170003
+001800     MULTIPLY WS-A BY WS-B GIVING WS-E                            00180003
+001900     DISPLAY 'PRODC = ' , WS-E                                    00190003
+002000     DIVIDE WS-A BY WS-B GIVING WS-F                              00200003
+002100     DISPLAY 'DIVC = ' , WS-F                                     00210003
+002200     STOP RUN.                                                    00220000

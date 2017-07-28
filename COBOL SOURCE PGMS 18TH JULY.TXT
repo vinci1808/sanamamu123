@@ -1,0 +1,309 @@
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        PROCEDURE DIVISION.
+            DISPLAY '    ==     '
+            DISPLAY 'HELLO WORLD'
+            DISPLAY '== == == =='
+            DISPLAY '=MONALISA=='
+            DISPLAY '  =  =  =  '
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-INPUT           PIC X(  ).
+            WS-INPUT           PIC X(  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-INPUT
+            ACCEPT WS-INPUT
+            DISPLAY '==========='
+            DISPLAY   WS-INPUT
+            DISPLAY   WS-INPUT
+            DISPLAY '==========='
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-GROUP.
+                WS-GROUP       PIC X(  ).
+            WS-INPUT           PIC X(  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-GROUP
+            DISPLAY '==========='
+            DISPLAY
+            DISPLAY
+            DISPLAY '==========='
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-GROUP.
+                WS-GROUP       PIC X(  ).
+            WS-INPUT           PIC X(  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-GROUP
+            DISPLAY '==========='
+            DISPLAY
+            DISPLAY
+            DISPLAY '==========='
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-INPUTS.
+                WS-INPUT       PIC X(  ).
+                WS-INPUT       PIC X(  ).
+            WS-OUTPUT .
+                WS-OUT         PIC X(  ).
+                WS-OUT         PIC X(  ).
+            WS-OUTPUT .
+                WS-OUT         PIC X(  ).
+                WS-OUT         PIC X(  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-INPUTS
+            MOVE WS-INPUT  TO WS-OUT  , WS-OUT
+            MOVE WS-INPUT  TO WS-OUT  , WS-OUT
+            DISPLAY '==========='
+            DISPLAY 'INPUT' , WS-INPUT , '*' , WS-INPUT
+            DISPLAY '==========='
+            DISPLAY 'OUTPUT ' , WS-OUT  , '$' , WS-OUT
+            DISPLAY '==========='
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC  (  ).
+            WS-B  PIC  (  ).
+            WS-C  PIC  (  ).
+            WS-D  PIC  (  ).
+            WS-E  PIC  (  ).
+            WS-F  PIC  (  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            ADD WS-A WS-B GIVING WS-C
+            DISPLAY 'SUMC = ' , WS-C
+            SUBTRACT WS-A FROM WS-B GIVING WS-D
+            DISPLAY 'SUBC = ' , WS-D
+            MULTIPLY WS-A BY WS-B GIVING WS-E
+            DISPLAY 'PRODC = ' , WS-E
+            DIVIDE WS-A BY WS-B GIVING WS-F
+            DISPLAY 'DIVC = ' , WS-F
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC  (  ).
+            WS-B  PIC  (  ).
+            WS-C  PIC  (  ).
+            WS-D  PIC S (  ).
+            WS-E  PIC  (  ).
+            WS-F  PIC  (  )V  .
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            ADD WS-A WS-B GIVING WS-C
+            DISPLAY 'SUMC = ' , WS-C
+            SUBTRACT WS-A FROM WS-B GIVING WS-D
+            DISPLAY 'SUBC = ' , WS-D
+            MULTIPLY WS-A BY WS-B GIVING WS-E
+            DISPLAY 'PRODC = ' , WS-E
+            DIVIDE WS-A BY WS-B GIVING WS-F
+            DISPLAY 'DIVC = ' , WS-F
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC  (  ).
+            WS-B  PIC  (  ).
+            WS-C  PIC  (  ).
+            WS-D  PIC S (  ).
+            WS-E  PIC  (  ).
+            WS-F  PIC  (  )V  .
+            WS-DISPLAY.
+               WS-D-O        PIC - (  ).
+               WS-F-O        PIC   (  ).  .
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            ADD WS-A WS-B GIVING WS-C
+            DISPLAY 'SUMC = ' , WS-C
+            SUBTRACT WS-A FROM WS-B GIVING WS-D
+            MOVE WS-D TO WS-D-O
+            DISPLAY 'SUBC = ' , WS-D-O
+            MULTIPLY WS-A BY WS-B GIVING WS-E
+            DISPLAY 'PRODC = ' , WS-E
+            DIVIDE WS-A BY WS-B GIVING WS-F
+            MOVE WS-F TO WS-F-O
+            DISPLAY 'DIVC = ' , WS-F-O
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC   V  .
+            WS-B  PIC   V  .
+            WS-C  PIC   V  .
+            WS-D  PIC   V  .
+            WS-E  PIC   V  .
+            WS-F  PIC   V  .
+            WS-DISPLAY.
+               WS-C-O        PIC   (  ).  .
+               WS-D-O        PIC   (  ).  .
+               WS-E-O        PIC   (  ).  .
+               WS-F-O        PIC   (  ).  .
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            ADD WS-A WS-B GIVING WS-C
+            MOVE WS-C TO WS-C-O
+            DISPLAY 'SUMC = ' , WS-C-O
+            SUBTRACT WS-A FROM WS-B GIVING WS-D
+            MOVE WS-D TO WS-D-O
+            DISPLAY 'SUBC = ' , WS-D-O
+            MULTIPLY WS-A BY WS-B GIVING WS-E
+            MOVE WS-E TO WS-E-O
+            DISPLAY 'PRODC = ' , WS-E-O
+            DIVIDE WS-A BY WS-B GIVING WS-F
+            MOVE WS-F TO WS-F-O
+            DISPLAY 'DIVC = ' , WS-F-O
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC  (  ).
+            WS-B  PIC  (  ).
+            WS-DISPLAY.
+               WS-C-O        PIC  Z .
+               WS-D-O        PIC  Z,ZZZ.
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            MOVE WS-A TO WS-C-O
+            MOVE WS-B TO WS-D-O
+            DISPLAY 'NUM = ' , WS-C-O
+            DISPLAY 'NUM = ' , WS-D-O
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC  (  ).
+            WS-B  PIC  (  ).
+            WS-C  PIC  (  ).
+            WS-D  PIC  (  ).
+            WS-E  PIC  (  ).
+            WS-F  PIC  (  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            ADD WS-A WS-B GIVING WS-C
+            DISPLAY 'SUMC = ' , WS-C
+            SUBTRACT WS-A FROM WS-B GIVING WS-D
+            DISPLAY 'SUBC = ' , WS-D
+            MULTIPLY WS-A BY WS-B GIVING WS-E
+            DISPLAY 'PRODC = ' , WS-E
+       *
+            IF WS-B = ZERO
+               DISPLAY 'ZERO DIVIDE NOT POSSIBLE'
+            ELSE
+               DIVIDE WS-A BY WS-B GIVING WS-F
+            DISPLAY 'DIVC = ' , WS-F
+            END-IF.
+       *
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC  (  ).
+            WS-B  PIC  (  ).
+            WS-C  PIC  (  ).
+            WS-D  PIC  (  ).
+            WS-E  PIC  (  ).
+            WS-F  PIC  (  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            IF WS-A IS NUMERIC AND WS-B IS NUMERIC
+               NEXT SENTENCE
+            ELSE
+               DISPLAY 'INPUTS ARE NOT NUMERIC'
+               STOP RUN
+               END IF.
+            ADD WS-A WS-B GIVING WS-C
+            DISPLAY 'SUMC = ' , WS-C
+            SUBTRACT WS-A FROM WS-B GIVING WS-D
+            DISPLAY 'SUBC = ' , WS-D
+            MULTIPLY WS-A BY WS-B GIVING WS-E
+            DISPLAY 'PRODC = ' , WS-E
+       *
+            IF WS-B = ZERO
+               DISPLAY 'ZERO DIVIDE NOT POSSIBLE - ZERO CHECK'
+            ELSE
+               DIVIDE WS-A BY WS-B GIVING WS-F
+            DISPLAY 'DIVC = ' , WS-F
+            END-IF.
+       *
+       *
+            IF WS-B IS POSITIVE
+               DIVIDE WS-A BY WS-B GIVING WS-F
+               DISPLAY 'DIVC = ', WS-F
+            ELSE
+               DISPLAY 'ZERO DIVIDE NOT POSSIBLE - POSITIVE CHECK'
+            END-IF.
+       *
+            STOP RUN.
+ MEMBER NAME  PROG
+        IDENTIFICATION DIVISION.
+        PROGRAM-ID. PROG  .
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+            WS-A  PIC  (  ).
+            WS-B  PIC  (  ).
+            WS-C  PIC  (  ).
+            WS-D  PIC  (  ).
+            WS-E  PIC  (  ).
+            WS-F  PIC  (  ).
+        PROCEDURE DIVISION.
+            ACCEPT WS-A
+            ACCEPT WS-B
+            IF WS-A IS NUMERIC AND WS-B IS NUMERIC
+               PERFORM PARA
+            ELSE
+               DISPLAY 'INPUTS ARE NON NUMERIC - NUMERIC CHECK '
+            END-IF.
+            STOP RUN.
+          PARA .
+            ADD WS-A WS-B GIVING WS-C
+            DISPLAY 'SUMC = ' , WS-C
+            SUBTRACT WS-A FROM WS-B GIVING WS-D
+            DISPLAY 'SUBC = ' , WS-D
+            MULTIPLY WS-A BY WS-B GIVING WS-E
+            DISPLAY 'PRODC = ' , WS-E
+            IF WS-B = ZERO
+               DISPLAY 'ZERO DIVIDE NOT POSSIBLE'
+            ELSE
+               DIVIDE WS-A BY WS-B GIVING WS-F
+            DISPLAY 'DIVC = ' , WS-F
+            END-IF.
+       *

@@ -1,0 +1,14 @@
+000100 IDENTIFICATION DIVISION.                                         00010000
+000200 PROGRAM-ID. PROG02.                                              00020000
+000300 DATA DIVISION.                                                   00030000
+000400 WORKING-STORAGE SECTION.                                         00040000
+000500 01  WS-INPUT1          PIC X(10).                                00050000
+000600 77  WS-INPUT2          PIC X(10).                                00060000
+000700 PROCEDURE DIVISION.                                              00070000
+000800     ACCEPT WS-INPUT1                                             00080000
+000900     ACCEPT WS-INPUT2                                             00090000
+001000     DISPLAY '==========='                                        00100000
+001100     DISPLAY   WS-INPUT1                                          00110000
+001200     DISPLAY   WS-INPUT2                                          00120000
+001300     DISPLAY '==========='                                        00130000
+001400     STOP RUN.                                                    00140000

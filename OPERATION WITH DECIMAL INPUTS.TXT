@@ -1,0 +1,31 @@
+000100 IDENTIFICATION DIVISION.                                         00010000
+000200 PROGRAM-ID. PROG08.                                              00020000
+000300 DATA DIVISION.                                                   00030000
+000400 WORKING-STORAGE SECTION.                                         00040000
+000500 01  WS-A  PIC 99V99.                                             00050000
+000600 01  WS-B  PIC 99V99.                                             00060000
+000700 01  WS-C  PIC 99V99.                                             00070000
+000800 01  WS-D  PIC 99V99.                                             00080000
+000900 01  WS-E  PIC 99V99.                                             00090000
+001000 01  WS-F  PIC 99V99.                                             00100000
+001100 01  WS-DISPLAY.                                                  00110000
+001200     03 WS-C-O        PIC  9(02).99.                              00120000
+001300     03 WS-D-O        PIC  9(02).99.                              00130000
+001400     03 WS-E-O        PIC  9(02).99.                              00140000
+001500     03 WS-F-O        PIC  9(02).99.                              00150000
+001600 PROCEDURE DIVISION.                                              00160000
+001700     ACCEPT WS-A                                                  00170000
+001800     ACCEPT WS-B                                                  00180000
+001900     ADD WS-A WS-B GIVING WS-C                                    00190000
+002000     MOVE WS-C TO WS-C-O                                          00200000
+002100     DISPLAY 'SUMC = ' , WS-C-O                                   00210000
+002200     SUBTRACT WS-A FROM WS-B GIVING WS-D                          00220000
+002300     MOVE WS-D TO WS-D-O                                          00230000
+002400     DISPLAY 'SUBC = ' , WS-D-O                                   00240000
+002500     MULTIPLY WS-A BY WS-B GIVING WS-E                            00250000
+002600     MOVE WS-E TO WS-E-O                                          00260000
+002700     DISPLAY 'PRODC = ' , WS-E-O                                  00270000
+002800     DIVIDE WS-A BY WS-B GIVING WS-F                              00280000
+002900     MOVE WS-F TO WS-F-O                                          00290000
+003000     DISPLAY 'DIVC = ' , WS-F-O                                   00300000
+003100     STOP RUN.                                                    00310000

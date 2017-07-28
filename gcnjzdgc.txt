@@ -1,0 +1,64 @@
+  WORKING-STORAGE SECTION.                                        
+  01  HEADING-LINE1.                                              
+      03  FILLER       PIC X(06) VALUE 'DATE:'.                   
+      03  P-DATE       PIC X(10) VALUE SPACES.                    
+      03  FILLER       PIC X(12) VALUE SPACES.                    
+      03  P-TITLE      PIC X(10) VALUE 'CAP GEMINI'.              
+      03  FILLER       PIC X(28) VALUE SPACES.                    
+      03  FILLER       PIC X(06) VALUE 'TIME:'.                   
+      03  P-TIME.                                                 
+       05  WS-TIME-HH   PIC 9(02) VALUE ZERO.                       
+       05  FILLER PIC X(01) VALUE ':'.                              
+       05  WS-TIME-MM   PIC 9(02) VALUE ZERO.                       
+       05  FILLER PIC X(01) VALUE ':'.                              
+       05  WS-TIME-SS   PIC 9(02) VALUE ZERO.                       
+  01  HEADING-LINE2.                                              
+     03  FILLER       PIC X(20) VALUE 'LISTING OF EMPLOYEES'.     
+     03  FILLER       PIC X(46) VALUE SPACES.                     
+     03  FILLER       PIC X(06) VALUE 'PAGE:'.     
+     03  P-PAGE       PIC Z9    VALUE ZERO.        
+  01  DETAIL-LINE.                                 
+     03  P-ID         PIC X(05) VALUE SPACES.     
+     03  FILLER       PIC X(01) VALUE SPACES.     
+     03  P-NAME       PIC X(15) VALUE SPACES.     
+     03  FILLER       PIC X(01) VALUE SPACES.     
+     03  P-LOC        PIC X(03) VALUE SPACES.     
+     03  FILLER       PIC X(01) VALUE SPACES.     
+     03  P-DOB        PIC X(10) VALUE SPACES.     
+     03  FILLER       PIC X(01) VALUE SPACES.     
+     03  P-TECH       PIC X(05) VALUE SPACES.     
+     03  FILLER       PIC X(01) VALUE SPACES.     
+     03  P-EARN       PIC ZZZ,ZZ9.99 VALUE ZERO.  
+     03  FILLER       PIC X(01) VALUE SPACES.     
+     03  FILLER       PIC X(01) VALUE SPACES.     
+      03  P-DEDN       PIC ZZZ,ZZ9.99 VALUE ZERO.       
+      03  FILLER       PIC X(01) VALUE SPACES.          
+      03  P-SAL        PIC ZZZ,ZZ9.99 VALUE ZERO.       
+  01  HEADING-LINE3.                                    
+      03  FILLER       PIC X(06) VALUE 'ID'.            
+      03  FILLER       PIC X(16) VALUE 'NAME'.          
+      03  FILLER       PIC X(04) VALUE 'LOC'.           
+      03  FILLER       PIC X(11) VALUE 'BIRTH DATE'.    
+      03  FILLER       PIC X(06) VALUE 'TECH'.          
+      03  FILLER       PIC X(11) VALUE '  EARNINGS '.   
+      03  FILLER       PIC X(11) VALUE ' DEDUCTIONS'.   
+      03  FILLER       PIC X(10) VALUE ' TOTAL SAL'.    
+  01  WS-VARIABLES.                                     
+      03  WS-DATE      PIC 9(08) VALUE ZERO.            
+      03  WS-TIME      PIC 9(06) VALUE ZERO.            
+        05  WS-TIME-HH   PIC 9(02). 
+       05  WS-TIME-MM   PIC 9(02).             
+       05  WS-TIME-SS   PIC 9(02).             
+       05  WS-TIME-FS   PIC 9(02).             
+     03  PAGE-COUNT   PIC 9(02) VALUE ZERO.    
+     03  LINE-COUNT   PIC 9(01) VALUE 4.       
+     03  WS-SAL       PIC 9(06)V99 VALUE ZERO. 
+ 01  WS-EMP-STAT     PIC X(02).                
+     88  OPEN-SUCCESS              VALUE '00'. 
+ 01  WS-REP-STAT     PIC X(02).                
+     88  OPEN-SUCCESS              VALUE '00'. 
+ 01  WS-FILE-FLAG    PIC X(01)     VALUE 'N'.  
+     88  END-OF-FILE               VALUE 'Y'.  
+ 01  WS-REP-FLAG    PIC X(01)      VALUE 'N'.  
+     88  END-OF-REPORT             VALUE 'Y'.  
+ 01  WS-TOT-EMP      PIC 9(02).                                    

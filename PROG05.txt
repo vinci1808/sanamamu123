@@ -1,0 +1,27 @@
+ IDENTIFICATION DIVISION.
+ PROGRAM-ID. PROG05.
+ DATA DIVISION.
+ WORKING-STORAGE SECTION.
+ 01  WS-INPUTS.
+     03  WS-INPUT1           PIC X(05).
+     03  WS-INPUT2           PIC X(10).
+ 01  WS-OUTPUT1.
+     03  WS-OUT11          PIC X(10).
+     03  WS-OUT12          PIC X(05).
+ 01  WS-OUTPUT2.
+     03  WS-OUT21          PIC X(10).     
+     03  WS-OUT22          PIC X(10).     
+ PROCEDURE DIVISION.                      
+     ACCEPT WS-INPUTS                     
+     MOVE WS-INPUT1 TO WS-OUT11, WS-OUT21 
+     MOVE WS-INPUT2 TO WS-OUT12, WS-OUT22 
+     DISPLAY '============='              
+     DISPLAY 'INPUT ', WS-INPUTS          
+     DISPLAY '============='                
+     DISPLAY 'OUTPUT1 ', WS-OUT11, WS-OUT12 
+     DISPLAY '============='                
+     DISPLAY 'OUTPUT1 ', WS-OUTPUT1         
+     DISPLAY '============='                
+     DISPLAY 'OUTPUT2 ', WS-OUTPUT2         
+     DISPLAY '============='                
+     STOP RUN.

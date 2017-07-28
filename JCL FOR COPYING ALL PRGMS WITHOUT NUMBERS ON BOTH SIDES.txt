@@ -1,0 +1,22 @@
+//useridX JOB ACCT#,CLASS=A,NOTIFY=&SYSUID,MSGCLASS=X,MSGLEVEL=(1,1)
+//*
+//DELETE   EXEC PGM=IEFBR14
+//A1       DD DSN=userid.COBOL.ZZZ,
+//            DISP=(MOD,DELETE,DELETE),
+//            SPACE=(TRK,(1,1),RLSE),
+//            DCB=(LRECL=81,BLKSIZE=8100,RECFM=FB,DSORG=PS)
+//IEBPTPCH EXEC PGM=IEBPTPCH
+//SYSUT1   DD DSN=userid.COBOL.SOURCE,DISP=OLD
+//SYSUT2   DD DSN=userid.COBOL.ZZZ,
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(TRK,(1,1),RLSE),
+//            DCB=(LRECL=81,BLKSIZE=8100,RECFM=FB,DSORG=PS)
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+  PUNCH TYPORG=PO
+/*
+================================
+COMMANDS IN THE COMMAND LINE....
+1.C ALL V ' ' 1
+2.C ALL P'#' ' ' 
+================================

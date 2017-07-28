@@ -1,0 +1,178 @@
+                                130768 MODULE - 1 MPT
+----------------------------------------------------------------------------------------
+
+1.                                                       RETURN CODE
+ 
+S1 = Executed
+First step hence No condition checking------------------      4
+
+S2 = ExecuteD
+Job CC	- 12 LT 4	= False
+Step CC	- 4 LT 4	= False------------------------      8
+STEP CC  - EVEN
+
+S3 = BYPASSED
+JOB CC= 12 LT(S1=4)    = FALSE
+        12 LT (S2=8)   = FALSE
+STEP CC=8 LE (S2=8)    = TRUE  ----------------------------  NO RETURN CODE
+
+S4= EXECUTED
+JOB CC = 12 LT(S1=4) = FALSE
+         12 LT (S2=8)= FALSE
+STEP CC= 8 LT (S1=4) = FALSE
+         8 LT (S2=8) = FALSE
+STEP CC= EVEN                   ----------------------------  0
+
+S5 = EXECUTED                        
+JOB CC = 12 LT(S1=4) = FALSE
+         12 LT (S2=8)= FALSE
+         12 LT (S4=0)= FALSE 
+STEP CC= 4 LT (S1=4) = FALSE
+STEP CC= 0 LT (S4=0) = FALSE -------------------------------    8
+
+S6 EXECUTED
+JOB CC = 12 LT(S1=4) = FALSE
+         12 LT(S2=8) = FALSE
+         12 LT(S4=0) = FALSE 
+         12 LT(S5=8) = FALSE
+STEP CC = 8  LT (S3=NO RC) = BYPASSED------------------------   ABENDS
+
+S7 EXECUTED
+JOB CC = 12 LT(S1=4)  = FALSE
+         12 LT (S2=8) = FALSE
+         12 LT (S4=0) = FALSE 
+         12 LT(S5=8)  = FALSE
+         12 LT (S6=NO RC)= BYPASSED
+STEP CC= 0 LE (S6=NO RC)= BYPASSED-----------------------------  0
+
+S8 EXECUTED
+JOB CC = 12 LT(S1=4) = FALSE
+         12 LT (S2=8)= FALSE
+         12 LT (S4=0)= FALSE 
+         12 LT(S5=8) = FALSE
+         12 LT (S6=NO RC)= BYPASSED
+         12 LT (S7=0) = FALSE
+STEP CC= 0 LT (S4=0) = FALSE
+STEP CC = 4 LT (S1=4) = FALSE----------------------------------- 4
+
+S9 BYPASSED
+JOB CC = 12 LT(S1=4)    = FALSE
+         12 LT (S2=8)   = FALSE
+         12 LT (S4=0)   = FALSE 
+         12 LT(S5=8)    = FALSE
+         12 LT (S6=NO RC)= BYPASSED
+         12 LT (S7=0)   = FALSE
+         12 LT(S8=4)    = FALSE
+STEP CC = 0 LT (S5=8)   = TRUE    ------------------------------- BYPASSED
+
+S10 BYPASSED
+JOB CC = 12 LT(S1=4) = FALSE
+         12 LT (S2=8)= FALSE
+         12 LT (S4=0)= FALSE 
+         12 LT(S5=8) = FALSE
+         12 LT (S6=NO RC)= BYPASSED
+         12 LT (S7=0)= FALSE
+         12 LT (S8=4)= FALSE
+         12 LT (S9= NO RC)= BYPASSED
+STEP CC= 12 GT (S1=4) = TRUE-------------------------------------- BYPASSED
+
+
+
+
+
+
+
+======================================================================================
+2.
+
+
+//DSRP013T JOB ABCD,'MONALI',MSGLEVEL=(1,1),MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID
+//*
+//STEP010  EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=DSRP013.TEST.SORTOUT,                    
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//STEP020  EXEC PGM=DFSORT                                   
+//SORTIN   DD DSN=DSRP013.TEST.SORTIN,DISP=OLD             
+//SORTOUT  DD DSN=DSRP013.TEST.SORTOUT,                    
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SORTWK01 DD SPACE=(CYL,(1,1),RLSE),UNIT=SYSDA            
+//SYSOUT   DD SYSOUT=*                                     
+//SYSIN    DD *                                            
+    INCLUDE COND=(135,1,CH,EQ,C'I')  
+    SORT FIELDS= (1,10,CH,A,31,10,CH,A)
+    SUM FIELDS= (125,8,ZD)
+    OUTERC FIELDS= (1:1,10,11:21,10,21:31,10,31:136,1,32:125,8,40:96X)  
+                             
+/*    
+
+
+
+
+
+
+===========================================================================================
+
+3.
+
+//DSRP013T JOB ABCD,'MONALI',MSGLEVEL=(1,1),MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID
+//*
+//PROCLIB JCLLIB ORDER=(DSRP013.TEST.PROCLIB)
+//JSTEP1 EXEC MYPROC,
+//       PARM.S2=(A1,B1,C1),
+//       TIME.S2=           ,
+//       COND.S3=((8,GT),EVEN)
+//S1.DD1 DD DSN=PROD.FILE2
+//S1.DD1 DD DSN=PROD.FILE4
+//S1.DD2 DD DSN=TEST.FINAL,DISP=SHR
+//S2.D2  DD DSN=FILEA
+//S3.OT1 DD VOL=
+//S3.STEPLIB  DD DSN=DSRP013.GRP.LOADIB,DISP=SHR
+//*
+
+=============================================================================================
+
+4.
+
+         
+//DSRP013I JOB ABCD,'MONALI',MSGLEVEL=(1,1),           
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID               
+//IPROC1   PROC                                            
+//*                                                        
+//PSTEP010 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=DSRP013.TEST.MERGE,                     
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//PSTEP020 EXEC PGM=SORT                               
+//SORTIN    DD DSN=DSRP013.TEST.INDATA1
+//SORTOUT   DD DSN=DSRP013.TEST.&&INDATA,                     
+//            DISP=(NEW,PASS),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SORTWK01 DD SPACE=(CYL,(1,1),RLSE),UNIT=SYSDA                        
+//SYSOUT   DD SYSOUT=*                                                 
+//SYSIN    DD DUMMY
+               
+
+=========================================================================================      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,165 @@
+ IDENTIFICATION DIVISION.
+ PROGRAM-ID. KSDSMOD.
+ ENVIRONMENT DIVISION.
+ INPUT-OUTPUT SECTION.
+ FILE-CONTROL.
+     SELECT EMPLOYEE-MASTER ASSIGN TO 'EMPMAST.DAT'
+        ORGANIZATION IS INDEXED
+        ACCESS MODE  IS RANDOM
+        RECORD KEY   IS EMP-ID
+        FILE STATUS  IS WS-EMP-STAT.
+     SELECT REPORT-FILE ASSIGN TO 'REPFILE.REP'
+        ORGANIZATION IS SEQUENTIAL
+        ACCESS MODE  IS SEQUENTIAL.
+        SELECT TRANSACTION-FILE ASSIGN TO 'TRANSACTION.DAT'
+        ORGANIZATION IS SEQUENTIAL
+        ACCESS MODE  IS SEQUENTIAL
+        FILE STATUS  IS WS-INP-STAT.
+ DATA DIVISION.
+ FILE SECTION.
+ FD  EMPLOYEE-MASTER
+     RECORD CONTAINS 50 CHARACTERS.
+ 01  MASTER-RECORD.              
+     03  EMP-ID       PIC X(05).   
+     03  EMP-NAME     PIC X(15).   
+     03  EMP-LOC      PIC X(03).   
+     03  EMP-DOB      PIC X(08).   
+     03  EMP-TECH     PIC X(05).   
+     03  EMP-EARN     PIC 9(05)V99.
+     03  EMP-DEDN     PIC 9(05)V99.     
+*    COPY 'EMPREC.dat'.
+ FD  TRANSACTION-FILE     
+     RECORD CONTAINS 5 CHARACTERS
+     RECORDING MODE IS F.   
+ 01  T-RECORD.              
+     03  T-CODE     PIC X(01).
+     03  T-ID       PIC X(05).   
+     03  T-NAME     PIC X(15).   
+     03  T-LOC      PIC X(03).   
+     03  T-DOB      PIC X(08).   
+     03  T-TECH     PIC X(05).   
+     03  T-EARN     PIC 9(05)V99.
+     03  T-DEDN     PIC 9(05)V99.     
+ FD  REPORT-FILE                                 
+     RECORD CONTAINS 80 CHARACTERS               
+     RECORDING MODE IS F.                        
+ 01  REPORT-RECORD PIC X(80).
+ WORKING-STORAGE SECTION.
+ 01  WS-VARIABLES.
+     03  WS-FILE-FLAG     PIC X(01) VALUE 'N'.
+         88  END-OF-FILE            VALUE 'Y'.
+     03  WS-EMP-FLAG      PIC X(01) VALUE 'N'.
+         88  EMP-FOUND              VALUE 'Y'.
+     03  EMP-VALID        PIC 9(02) VALUE ZERO.
+     03  EMP-INVALID      PIC 9(02) VALUE ZERO.
+     03  TOT-RECS         PIC 9(02) VALUE ZERO.
+     03  WS-EMP-STAT      PIC X(02) VALUE SPACES.
+     03  WS-INP-STAT      PIC X(02) VALUE SPACES.
+ 01  WS-VARIABLES.                               
+     03  WS-DATE      PIC 9(08) VALUE ZERO.      
+     03  WS-TIME                VALUE ZERO.      
+         05  WS-TIME-HH   PIC 9(02).             
+         05  WS-TIME-MM   PIC 9(02).             
+         05  WS-TIME-SS   PIC 9(02).             
+         05  WS-TIME-FS   PIC 9(02).             
+   
+*    03  CHOICE       PIC 9(02).                 
+     03  WS-SAL       PIC 9(06)V99 VALUE ZERO.       
+              
+  
+ 01  TOTAL-SAL     PIC $Z,ZZZ.99.                         
+ 01  EARN          PIC Z,ZZZ.99.                          
+ 01  DEDN          PIC Z,ZZZ.99.
+ 01  DETAIL-LINE.                                             
+     03  P-ID         PIC X(05) VALUE SPACES.                 
+     03  FILLER       PIC X(01) VALUE SPACES.                 
+     03  P-NAME       PIC X(15) VALUE SPACES.                 
+     03  FILLER       PIC X(01) VALUE SPACES.                 
+     03  P-LOC        PIC X(03) VALUE SPACES.                 
+     03  FILLER       PIC X(01) VALUE SPACES.                 
+     03  P-DOB        PIC X(10) VALUE SPACES.                 
+     03  FILLER       PIC X(01) VALUE SPACES.                         
+     03  P-TECH       PIC X(05) VALUE SPACES.          
+     03  FILLER       PIC X(01) VALUE SPACES.          
+     03  P-EARN       PIC ZZZ,ZZZ.99 VALUE ZERO.       
+     03  FILLER       PIC X(01) VALUE SPACES.          
+     03  P-DEDN       PIC ZZZ,ZZZ.99 VALUE ZERO.       
+     03  FILLER       PIC X(01) VALUE SPACES.          
+     03  P-SAL    PIC ZZZ,ZZ9.99 VALUE ZERO.           
+ 01  RECS-READ       PIC X(02) VALUE ZERO.
+ 01  RECS-ADDED      PIC X(02) VALUE ZERO.
+ 01  RECS-UPDATED    PIC X(02) VALUE ZERO.
+ 01  RECS-DELETED    PIC X(02) VALUE ZERO.
+ 01  RECS-ERROR      PIC X(02) VALUE ZERO.
+ 01  T-CODE          PIC X(01).
+ 01  HEADING-LINE.                                    
+     03  FILLER       PIC X(06) VALUE 'ID'.            
+     03  FILLER       PIC X(16) VALUE 'NAME'.          
+     03  FILLER       PIC X(04) VALUE 'LOC'.           
+     03  FILLER       PIC X(11) VALUE 'BIRTH DATE'.    
+     03  FILLER       PIC X(06) VALUE 'TECH'.          
+     03  FILLER       PIC X(11) VALUE '  EARNINGS '.   
+     03  FILLER       PIC X(11) VALUE 'DEDUCTIONS '.   
+     03  FILLER       PIC X(10) VALUE ' TOTAL SAL'.
+ PROCEDURE DIVISION.
+ 0000-MAIN-PARA.
+     PERFORM 1000-INIT-PARA.
+     PERFORM 2000-PROCESS-PARA  UNTIL  END-OF-FILE
+     PERFORM 9000-END-PARA
+     STOP RUN.
+ 1000-INIT-PARA.
+     OPEN I/O EMPLOYEE-MASTER 
+     OPEN INPUT TRANSACTION-FILE
+     OPEN OUTPUT REPORT-FILE.  
+     WRITE T-RECORD FROM HEADING-LINE.
+     DISPLAY 'EMP OPEN FS ', WS-EMP-STAT
+     OPEN INPUT TRANSACTION-FILE.
+     DISPLAY 'REP OPEN FS ', WS-INP-STAT
+     PERFORM 1500-READ-PARA.
+ 1500-READ-PARA.
+     READ TRANSACTION-FILE
+        AT END
+           MOVE 'Y' TO WS-FILE-FLAG
+        NOT AT END
+           ADD 1 TO RECS-READ
+     END-READ.
+ 2000-PROCESS-PARA.
+     PERFORM 2500-READ-MASTER 
+     PERFORM 3000-MOVE-PARA
+     IF EMP-FOUND
+         DISPLAY 'EMP=> ',  MASTER-RECORD
+         ADD 1 TO EMP-VALID 
+         WRITE T-RECORD FROM DETAIL-LINE 
+     ELSE
+         DISPLAY 'INVALID EMPLOYEE ID ', INPUT-RECORD
+         ADD 1 TO EMP-INVALID
+     END-IF
+     PERFORM 1500-READ-PARA.
+ 2500-READ-MASTER.
+     MOVE INPUT-RECORD TO EMP-ID
+     READ EMPLOYEE-MASTER
+         INVALID KEY
+             MOVE 'N' TO WS-EMP-FLAG
+         NOT INVALID KEY
+             MOVE 'Y' TO WS-EMP-FLAG
+     END-READ.
+ 3000-MOVE-PARA.                                         
+     MOVE T-ID   TO P-ID.                           
+     MOVE T-NAME TO P-NAME.                            
+     MOVE T-LOC  TO P-LOC.                              
+     MOVE T-TECH TO P-TECH.                            
+     MOVE T-EARN TO P-EARN.                            
+     MOVE T-DEDN TO P-DEDN.                            
+     MOVE T-DOB(1:4)   TO P-DOB(7:4)                   
+     MOVE T-DOB(5:2)   TO P-DOB(4:2)                   
+     MOVE T-DOB(7:2)   TO P-DOB(1:2)                   
+     MOVE '/'     TO P-DOB(3:1)                          
+                     P-DOB(6:1).                              
+     COMPUTE WS-SAL = T-EARN - T-DEDN      
+     MOVE WS-SAL      TO P-SAL  
+ 9000-END-PARA.
+     DISPLAY '==================================='
+     DISPLAY 'TOTAL RECORDS   = ', TOT-RECS
+     DISPLAY 'VALID EMP IDS   = ', EMP-VALID
+     DISPLAY 'INVALID EMP IDS = ', EMP-INVALID
+     CLOSE EMPLOYEE-MASTER, TRANSACTION-FILE.

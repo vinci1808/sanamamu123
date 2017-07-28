@@ -1,0 +1,213 @@
+ IDENTIFICATION DIVISION.
+ PROGRAM-ID. PROD.
+ ENVIRONMENT DIVISION.
+ INPUT-OUTPUT SECTION.
+ FILE-CONTROL.
+     SELECT PRODUCT-MASTER ASSIGN TO 'PRODMAST.DAT'
+        ORGANIZATION IS INDEXED
+        ACCESS MODE  IS RANDOM
+        RECORD KEY   IS PROD-CODE
+        FILE STATUS  IS WS-MAST-STAT.
+     SELECT REPORT-FILE ASSIGN TO 'REPFILE.REP'
+        ORGANIZATION IS SEQUENTIAL
+        ACCESS MODE  IS SEQUENTIAL 
+        FILE STATUS  IS WS-REP-STAT.
+     SELECT TRANSACTION-FILE ASSIGN TO 'TRANSACTION.DAT'
+        ORGANIZATION IS SEQUENTIAL
+        ACCESS MODE  IS SEQUENTIAL
+        FILE STATUS  IS WS-INP-STAT.
+ DATA DIVISION.
+ FILE SECTION.
+ FD  PRODUCT-MASTER
+     RECORD CONTAINS 50 CHARACTERS.
+ 01  MASTER-RECORD.              
+     03  PROD-CODE      PIC X(05).   
+     03  PROD-NAME      PIC X(15).   
+     03  STOCK-QTY      PIC 9(05).   
+     03  PROD-PRICE     PIC 9(07)V99.   
+ FD  TRANSACTION-FILE.     
+ 01  T-RECORD.              
+     03  PROD-CODE    PIC X(05).   
+     03  TRAN-CODE    PIC X(15).   
+     03  TRAN-DATE    PIC X(03).   
+     03  TRAN-TYPE    PIC X(08).
+         88  VALID-TYPE   VALUE 'B', 'S'.
+         88  TRAN-ADD     VALUE 'S'.
+         88  TRAN-SUB     VALUE 'B'.
+     03  TRAN-QTY     PIC X(05).    
+ FD  REPORT-FILE.                                 
+ 01  REPORT-RECORD    PIC X(60).
+ WORKING-STORAGE SECTION.   
+ 01  TOT-RECS         PIC 9(02) VALUE ZERO.
+ 01  EMP-SAL          PIC 9(05)V99.
+ 01  WS-VARIABLES.
+     03  WS-FILE-FLAG    PIC X(01)   VALUE 'N'.
+         88  END-OF-FILE             VALUE 'Y'.
+     03  WS-EMP-FLAG     PIC X(01)   VALUE 'N'.
+         88  EMP-FOUND               VALUE 'Y'.
+     03  WS-ERROR-FLAG   PIC X(01)   VALUE 'N'.
+         88  ERROR-OCCURRED          VALUE 'Y'.
+     03  EMP-VALID       PIC 9(02) VALUE ZERO.
+     03  EMP-INVALID     PIC 9(02) VALUE ZERO.
+     03  TOT-RECS        PIC 9(02) VALUE ZERO.
+     03  WS-EMP-STAT     PIC X(02) VALUE SPACES.
+     03  WS-INP-STAT     PIC X(02) VALUE SPACES.
+     03  WS-REP-STAT     PIC X(02) VALUE SPACES.
+ 01  WS-VARIABLES.                               
+     03  WS-DATE      PIC 9(08) VALUE ZERO.      
+     03  WS-TIME                VALUE ZERO.      
+         05  WS-TIME-HH   PIC 9(02).             
+         05  WS-TIME-MM   PIC 9(02).             
+         05  WS-TIME-SS   PIC 9(02).             
+         05  WS-TIME-FS   PIC 9(02).             
+   
+*    03  CHOICE       PIC 9(02).                 
+     03  WS-SAL       PIC 9(06)V99 VALUE ZERO.       
+              
+  
+ 01  TOTAL-SAL     PIC $Z,ZZZ.99.                         
+ 01  EARN          PIC Z,ZZZ.99.                          
+ 01  DEDN          PIC Z,ZZZ.99.
+ 01  DETAIL-LINE.                                             
+     03  P-ID        PIC X(07) VALUE SPACES.                 
+     03  P-CODE      PIC X(03) VALUE SPACES.                 
+     03  P-MESSAGE   PIC X(50) VALUE SPACES.                 
+ 01  RECS-READ       PIC 9(02) VALUE ZERO.
+ 01  RECS-ADDED      PIC 9(02) VALUE ZERO.
+ 01  RECS-UPDATED    PIC 9(02) VALUE ZERO.
+ 01  RECS-DELETED    PIC 9(02) VALUE ZERO.
+ 01  RECS-ERROR      PIC 9(02) VALUE ZERO.
+* 01  HEADING-LINE.                                    
+*     03  FILLER       PIC X(06) VALUE 'ID'.            
+*     03  FILLER       PIC X(16) VALUE 'NAME'.          
+*     03  FILLER       PIC X(04) VALUE 'LOC'.           
+*     03  FILLER       PIC X(11) VALUE 'BIRTH DATE'.    
+*     03  FILLER       PIC X(06) VALUE 'TECH'.          
+*     03  FILLER       PIC X(11) VALUE '  EARNINGS '.   
+*     03  FILLER       PIC X(11) VALUE 'DEDUCTIONS '.   
+*     03  FILLER       PIC X(10) VALUE ' TOTAL SAL'.
+ PROCEDURE DIVISION.
+ 0000-MAIN-PARA.
+     PERFORM 1000-INIT-PARA.
+     PERFORM 2000-PROCESS-PARA  UNTIL  END-OF-FILE
+     PERFORM 9000-END-PARA
+     STOP RUN.
+ 1000-INIT-PARA.
+     OPEN I-O EMPLOYEE-MASTER 
+     OPEN INPUT TRANSACTION-FILE
+     OPEN OUTPUT REPORT-FILE.  
+     DISPLAY 'EMP OPEN FS ', WS-EMP-STAT
+     DISPLAY 'TRANS OPEN FS ', WS-INP-STAT
+     DISPLAY 'REP OPEN FS ', WS-REP-STAT
+     PERFORM 1500-READ-PARA.
+ 1500-READ-PARA.
+     READ TRANSACTION-FILE
+        AT END
+           MOVE 'Y' TO WS-FILE-FLAG
+        NOT AT END
+           ADD 1 TO TOT-RECS
+     END-READ.
+ 2000-PROCESS-PARA.
+     IF VALID-CODE
+         PERFORM 2500-READ-MASTER 
+     END-IF.
+     EVALUATE TRUE
+     WHEN EMP-ADD
+         PERFORM PARA-ADD
+     WHEN EMP-UPD
+         PERFORM PARA-UPDATE
+     WHEN EMP-DEL
+         PERFORM PARA-DELETE
+     WHEN OTHER
+         MOVE 'INVALID TRANSACTION CODE' TO P-MESSAGE
+     END-EVALUATE.
+     PERFORM WRITE-REPORT
+     IF ERROR-OCCURRED
+     ADD 1  TO RECS-ERROR
+     MOVE 'N' TO WS-ERROR-FLAG
+     END-IF
+     PERFORM 1500-READ-PARA.
+ 
+ WRITE-REPORT.
+     MOVE T-ID TO P-ID
+     MOVE T-CODE TO P-CODE
+     WRITE REPORT-RECORD FROM DETAIL-LINE.
+ PARA-ADD.
+     IF EMP-FOUND
+        MOVE 'EMPLOYEE TO ADD EXISTS' TO P-MESSAGE
+        MOVE 'Y' TO WS-ERROR-FLAG
+     ELSE
+        PERFORM 3000-MOVE-PARA 
+        PERFORM WRITE-PARA
+     END-IF.
+ PARA-UPDATE.
+     IF EMP-FOUND
+        PERFORM 3000-MOVE-PARA
+        PERFORM REWRITE-PARA
+     ELSE
+        MOVE 'EMPLOYEE TO UPDATE NOT FOUND' TO P-MESSAGE
+        MOVE 'Y' TO WS-ERROR-FLAG
+     END-IF.
+ PARA-DELETE.
+     IF EMP-FOUND
+        PERFORM 3000-MOVE-PARA
+        PERFORM DELETE-PARA
+     ELSE
+        MOVE 'EMPLOYEE TO UPDATE NOT FOUND' TO P-MESSAGE
+        MOVE 'Y' TO WS-ERROR-FLAG
+     END-IF.    
+ WRITE-PARA.    
+*     PERFORM 3000-MOVE-PARA
+     WRITE MASTER-RECORD
+         INVALID KEY
+             MOVE 'EMPLOYEE TO ADD EXISTS' TO P-MESSAGE
+             MOVE 'Y' TO WS-ERROR-FLAG
+         NOT INVALID KEY
+             MOVE 'EMPLOYEE ADDED SUCCESSFULLY' TO P-MESSAGE
+             ADD 1 TO RECS-ADDED
+     END-WRITE.
+   
+ REWRITE-PARA.
+*     PERFORM 3000-MOVE-PARA
+     REWRITE MASTER-RECORD
+         INVALID KEY
+             MOVE 'EMPLOYEE TO UPDATE EXISTS' TO P-MESSAGE
+             MOVE 'Y' TO WS-ERROR-FLAG
+         NOT INVALID KEY
+             MOVE 'EMPLOYEE UPDATED SUCCESSFULLY' TO P-MESSAGE
+             ADD 1 TO RECS-UPDATED
+     END-REWRITE.
+     
+ DELETE-PARA.
+*     PERFORM 3000-MOVE-PARA
+      DELETE EMPLOYEE-MASTER
+         INVALID KEY
+             MOVE 'EMPLOYEE TO DELETE EXISTS' TO P-MESSAGE
+             MOVE 'Y' TO WS-ERROR-FLAG
+         NOT INVALID KEY
+             MOVE 'EMPLOYEE DELETED SUCCESSFULLY' TO P-MESSAGE
+             ADD 1 TO RECS-DELETED
+      END-DELETE.
+     
+ 2500-READ-MASTER.
+     MOVE T-ID TO EMP-ID
+     READ EMPLOYEE-MASTER
+         INVALID KEY
+             MOVE 'N' TO WS-EMP-FLAG
+         NOT INVALID KEY
+             MOVE 'Y' TO WS-EMP-FLAG
+     END-READ.
+ 3000-MOVE-PARA.                                                       
+     MOVE T-NAME TO EMP-NAME.                            
+     MOVE T-LOC  TO EMP-LOC.                              
+     MOVE T-TECH TO EMP-TECH.                            
+     MOVE T-EARN TO EMP-EARN.                            
+     MOVE T-DEDN TO EMP-DEDN.                            
+     MOVE T-DOB  TO EMP-DOB.                   
+*     COMPUTE WS-SAL = T-EARN - T-DEDN      
+*     MOVE WS-SAL      TO EMP-SAL.  
+ 9000-END-PARA.
+     DISPLAY '==================================='
+     DISPLAY 'VALID EMP IDS   = ', EMP-VALID
+     DISPLAY 'INVALID EMP IDS = ', EMP-INVALID
+     CLOSE EMPLOYEE-MASTER, TRANSACTION-FILE, REPORT-FILE.

@@ -1,0 +1,13 @@
+ IDENTIFICATION DIVISION.
+ PROGRAM-ID. PROG02.
+ PROCEDURE DIVISION.
+     DISPLAY '============='
+     DISPLAY 'HELLO WORLD'
+     DISPLAY '============='
+     DISPLAY 'GAGAN ' 'MITRUKA'
+     DISPLAY '============='
+     DISPLAY 7568922000
+     DISPLAY '============='
+     DISPLAY 7568322000
+     DISPLAY '============='
+     STOP RUN.

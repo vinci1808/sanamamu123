@@ -1,0 +1,5 @@
+prco1 abcdefghijklmno 10000 5000000050
+prco2 bsdglcjdkhuiweg 70000     700000
+prco3 curaerhjqljclsd 90000    4000060
+prco4 dhrwjdcvhskudhf 40000 3000000075
+prco5 euidjulksdhdgiw 20000 2005005050

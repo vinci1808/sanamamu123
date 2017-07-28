@@ -1,0 +1,309 @@
+ IDENTIFICATION DIVISION.                               
+ PROGRAM-ID. PROG13.                                    
+ ENVIRONMENT DIVISION.                                  
+ INPUT-OUTPUT SECTION.                                  
+ FILE-CONTROL.                                          
+     SELECT EMP-FILE ASSIGN TO 'EMP1.DAT'                 
+     ORGANIZATION IS SEQUENTIAL                        
+     ACCESS MODE IS SEQUENTIAL                         
+     FILE STATUS IS WS-EMP-STAT.                       
+     SELECT EMPLOYEE-FILE ASSIGN TO 'EMP.DAT'           
+     ORGANIZATION IS SEQUENTIAL                        
+     ACCESS MODE IS SEQUENTIAL                         
+     FILE STATUS IS WS-EMP1-STAT.                      
+     SELECT OUT-FILE ASSIGN TO 'OUT.REP'                
+     ORGANIZATION IS SEQUENTIAL                        
+     ACCESS MODE IS SEQUENTIAL                         
+     FILE STATUS IS WS-OUT-STAT.                       
+     SELECT WORK-FILE ASSIGN TO 'SORT.DAT'.     
+ DATA DIVISION.                                
+ FILE SECTION.                                 
+ FD  EMP-FILE                                  
+     RECORD CONTAINS 50 CHARACTERS             
+     RECORDING MODE IS F.                      
+ 01  EMP-RECORD.                               
+     03  EMP-ID    PIC X(05).                  
+     03  EMP-NAME  PIC X(15).                  
+     03  EMP-LOC   PIC X(03).                  
+     03  EMP-DOB.                              
+         05 EMP-DOB-YYYY PIC X(04).            
+         05 EMP-DOB-MM  PIC X(02).             
+         05 EMP-DOB-DD PIC X(02).              
+     03  EMP-TECH  PIC X(05).                  
+     03  EMP-EARN  PIC 9(05)V99.               
+     03  EMP-DEDN  PIC 9(05)V99.               
+ FD  EMPLOYEE-FILE                                  
+     RECORD CONTAINS 50 CHARACTERS             
+     RECORDING MODE IS F.                      
+                         
+                              
+ 01  EMPLOYEE-RECORD.                          
+     03 I-EMP-ID PIC X(5).                     
+     03 FILLER PIC X(45). 
+ FD  OUT-FILE                                  
+     RECORD CONTAINS 80 CHARACTERS             
+     RECORDING MODE IS F.                      
+ 01  OUT-RECORD PIC X(80).                     
+ SD  WORK-FILE.                                
+ 01 WORK-RECORD.
+     03 FILLER PIC X(20).                     
+     03 I-EMP-LOC PIC X(03).
+     03 FILLER PIC X(08).                      
+     03 I-EMP-TECH PIC X(05).
+     03 FILLER PIC X(14).                   
+ WORKING-STORAGE SECTION.                      
+ 01 TEMP-TECH PIC X(05) VALUE SPACES.
+ 01 TEMP-LOC  PIC X(03) VALUE SPACES.
+ 01 WS-STOP PIC X(1).
+ 01  WS-EMP-STAT  PIC X(02).                   
+     88  OPEN-EMP-SUCCESS        VALUE '00'.   
+ 01  WS-EMP-FLAG  PIC X(01) VALUE 'N'.         
+     88  END-EMP-FILE         VALUE 'Y'.
+     
+ 01  WS-OUT-STAT  PIC X(02).                  
+     88  OPEN-SUCCESS        VALUE '00'.      
+ 01  WS-OUT-FLAG  PIC X(01) VALUE 'N'.        
+     88  END-OF-FILE         VALUE 'Y'.       
+ 01  WS-EMP1-STAT  PIC X(02).                 
+     88  OPEN-EMP1-SUCCESS        VALUE '00'. 
+ 01  WS-EMP1-FLAG  PIC X(01) VALUE 'N'.       
+     88  END-EMP1-FILE         VALUE 'Y'.     
+ 01  HEADING-LINE1.                           
+     03  FILLER    PIC X(06) VALUE 'DATE:'.   
+     03  P-DATE.                              
+         05 WS-DATE-DD PIC X(02) VALUE ZERO.  
+         05 FILLER PIC X(01) VALUE '/'.       
+         05 WS-DATE-MM PIC X(02) VALUE ZERO.  
+         05 FILLER PIC X(01) VALUE '/'.       
+         05 WS-DATE-YYYY PIC X(04) VALUE ZERO.
+     03  FILLER    PIC X(50) VALUE SPACES.    
+     03  FILLER    PIC X(06) VALUE 'DATE:'.                
+     03  P-TIME.                                           
+         05 WS-TIME-HH PIC X(02) VALUE ZERO.               
+         05 FILLER PIC X(01) VALUE ':'.                    
+         05 WS-TIME-MM PIC X(02) VALUE ZERO.               
+         05 FILLER PIC X(02) VALUE ':'.                    
+         05 WS-TIME-SS PIC X(02) VALUE ZERO.               
+ 01  HEADING-LINE2.                                        
+     03  FILLER    PIC X(20) VALUE 'LISTING OF EMPLOYEES'. 
+     03  FILLER    PIC X(46) VALUE SPACES.                 
+     03  FILLER    PIC X(06) VALUE 'PAGE:'.                
+     03  PAGENO    PIC X(02) VALUE '01'.                   
+ 01  DETAIL-LINE.                                          
+     03  P-ID    PIC X(05) VALUE SPACES.                   
+     03  FILLER    PIC X(01) VALUE SPACES.                 
+     03  P-NAME  PIC X(15) VALUE SPACES.                   
+     03  FILLER    PIC X(01) VALUE SPACES.                 
+     03  P-LOC   PIC X(03) VALUE SPACES.                   
+     03  FILLER    PIC X(01) VALUE SPACES.    
+     03  P-DOB.                               
+         05 EMP-DOB-DD PIC X(02) VALUE ZERO.  
+         05 FILLER PIC X(01) VALUE '/'.       
+         05 EMP-DOB-MM PIC X(02) VALUE ZERO.  
+         05 FILLER PIC X(01) VALUE '/'.       
+         05 EMP-DOB-YYYY PIC X(04) VALUE ZERO.
+     03  FILLER    PIC X(01) VALUE SPACES.    
+     03  P-TECH  PIC X(05) VALUE SPACES.      
+     03  FILLER    PIC X(01) VALUE SPACES.    
+     03  P-EARN  PIC ZZZ,ZZ9.99 VALUE ZERO.   
+     03  FILLER    PIC X(01) VALUE SPACES.    
+     03  P-DEDN  PIC ZZZ,ZZ9.99 VALUE ZERO.   
+     03  FILLER    PIC X(1) VALUE SPACES.     
+     03  P-SAL   PIC ZZZ,ZZ9.99 VALUE ZERO.   
+ 01  HEADING-LINE3.                           
+     03  FILLER    PIC X(06) VALUE 'ID'.      
+     03  FILLER    PIC X(16) VALUE 'NAME'.     
+     03  FILLER    PIC X(04) VALUE 'LOC'.             
+     03  FILLER    PIC X(11) VALUE 'BIRTH DATE'.      
+     03  FILLER    PIC X(06) VALUE 'TECH'.            
+     03  FILLER    PIC X(11) VALUE '  EARNINGS '.     
+     03  FILLER    PIC X(11) VALUE 'DEDUCTIONS '.     
+     03  FILLER    PIC X(10) VALUE 'TOTAL SAL '.      
+ 01  TECH-DISPLAYS-TEMP.
+     03  WS-TECH-TOTAL-EMP PIC 9(03) VALUE ZERO.
+     03  WS-TECH-TOTAL-EARN PIC 9(07)V99 VALUE ZERO.
+     03  WS-TECH-TOTAL-DEDN PIC 9(07)V99 VALUE ZERO.
+     03  WS-TECH-TOTAL-SAL  PIC 9(07)V99 VALUE ZERO.
+ 01  LOC-DISPLAYS-TEMP.
+     03  WS-LOC-TOTAL-EMP PIC 9(03) VALUE ZERO.
+     03  WS-LOC-TOTAL-EARN PIC 9(07)V99 VALUE ZERO.
+     03  WS-LOC-TOTAL-DEDN PIC 9(07)V99 VALUE ZERO.
+     03  WS-LOC-TOTAL-SAL  PIC 9(07)V99 VALUE ZERO.
+ 01  TECH-DISPLAY.
+     03  FILLER    PIC X(12) VALUE 'TECH DISPLAY'.
+     03  TECH-DISPLAY-EMP PIC 9(03) VALUE ZERO.
+     03  FILLER    PIC X(17) VALUE SPACES.
+     03  TECH-DISPLAY-EARN PIC Z,ZZZ,ZZ9.99 VALUE ZERO.
+     03  TECH-DISPLAY-DEDN PIC Z,ZZZ,ZZ9.99 VALUE ZERO.
+     03  TECH-DISPLAY-SAL  PIC Z,ZZZ,ZZ9.99 VALUE ZERO.
+ 01  LOC-DISPLAY.
+     03  FILLER    PIC X(11) VALUE 'LOC DISPLAY'.
+     03  LOC-DISPLAY-EMP PIC 9(03) VALUE ZERO.
+     03  FILLER    PIC X(18) VALUE SPACES.
+     03  LOC-DISPLAY-EARN PIC Z,ZZZ,ZZ9.99 VALUE ZERO.
+     03  LOC-DISPLAY-DEDN PIC Z,ZZZ,ZZ9.99 VALUE ZERO.
+     03  LOC-DISPLAY-SAL  PIC Z,ZZZ,ZZ9.99 VALUE ZERO.
+ 01  WS-TOT-EMPLOYEE PIC 9(02) VALUE ZERO.            
+ 01  WS-VARIABLES.                                    
+     03 WS-DATE            VALUE ZERO.                
+        05 WS-DATE-YYYY PIC 9(04).                    
+        05 WS-DATE-MM PIC 9(02).                      
+        05 WS-DATE-DD PIC 9(02).                      
+     03 WS-TIME            VALUE ZERO.                
+        05  WS-TIME-HH PIC 9(02).                     
+        05  WS-TIME-MM PIC 9(02).                     
+        05  WS-TIME-SS PIC 9(02).                     
+     03 PAGE-COUNT PIC 9(02) VALUE ZERO.              
+     03 LINE-COUNT PIC 9(02) VALUE 00.                
+     03 USER-COUNT PIC 9(02) VALUE 00.                          
+     03 WS-SAL PIC 9(06)V99 VALUE ZERO.                         
+ 01 LAST-DISPLAY-TEMP.                                               
+     03 WS-TOTAL-EMP PIC 9(03) VALUE ZERO.  
+     03 WS-TOTAL-EARN PIC 9(10)V99 VALUE ZERO.       
+     03 WS-TOTAL-DEDN PIC 9(10)V99 VALUE ZERO.                 
+     03 WS-TOTAL-SAL PIC 9(10)V99 VALUE ZERO.                  
+ 01 LAST-DISPLAY.                                               
+     03 DIPLAY PIC X(25) VALUE ' LIST NO OF EMPLOYEE : '.      
+     03 DISPLAY-EMP PIC 9(03) VALUE ZERO.
+     03 FILLER PIC X(15) VALUE SPACES.                         
+     03 DISPLAY-EARN PIC 9(10)V99 VALUE ZERO.                 
+     03 FILLER PIC X(1) VALUE SPACES.                          
+     03 DISPLAY-DEDN PIC 9(10)V99 VALUE ZERO.                 
+     03 FILLER PIC X(1) VALUE SPACES.                          
+     03 DISPLAY-SAL PIC 9(10)V99 VALUE ZERO.  
+ 01 PAGE-CONTROL.                                               
+     03 FILLER       PIC X(14)    VALUE 'PAGE CONTROL :'.      
+     03 FILLER       PIC X(29)    VALUE SPACES.                
+     03 WS-PAGE-EARN PIC 9(08)V99 VALUE ZERO.                  
+     03 FILLER       PIC X(01)    VALUE SPACE.                 
+     03 WS-PAGE-DEDN PIC 9(08)V99 VALUE ZERO.                  
+     03 FILLER       PIC X(01)    VALUE SPACE.                 
+     03 WS-PAGE-SAL  PIC 9(08)V99 VALUE ZERO.                  
+ PROCEDURE DIVISION.                                      
+ MAIN-PARA.                                               
+     ACCEPT USER-COUNT                                   
+     MOVE ZERO TO LINE-COUNT                 
+     PERFORM 1000-INIT-PARA                              
+     PERFORM 2500-HEADING-PARA
+     PERFORM 2000-PROCESS-PARA  UNTIL  END-EMP-FILE      
+     PERFORM 8500-TOTALS-DISPLAY
+     PERFORM 9000-END-PARA                               
+     ACCEPT WS-STOP
+     STOP RUN.                                           
+ 1000-INIT-PARA.                                          
+     PERFORM 1111-SORT-PARA                             
+     OPEN INPUT EMP-FILE                                
+     OPEN OUTPUT OUT-FILE                               
+     DISPLAY WS-EMP-STAT                                
+     DISPLAY WS-OUT-STAT                                
+     IF OPEN-EMP-SUCCESS                                
+     DISPLAY 'FILE HAS BEEN SUCCESSFULLY OPENED'        
+     END-IF                                             
+     PERFORM 1200-DATE-TIME-PARA.                       
+     PERFORM 1500-READ-PARA.         
+ 1111-SORT-PARA.                       
+     SORT WORK-FILE                  
+          ON ASCENDING KEY I-EMP-LOC  
+          ON ASCENDING KEY I-EMP-TECH
+          WITH DUPLICATES IN ORDER   
+          USING EMPLOYEE-FILE        
+          GIVING EMP-FILE.           
+ 1200-DATE-TIME-PARA.                  
+     ACCEPT WS-DATE FROM DATE      
+     ACCEPT WS-TIME FROM TIME.        
+     MOVE CORR WS-DATE TO P-DATE.     
+     MOVE CORR WS-TIME TO P-TIME.     
+ 1500-READ-PARA.                       
+      READ EMP-FILE                  
+      AT END                          
+         MOVE 'Y' TO WS-EMP-FLAG      
+      NOT AT END                      
+         ADD 1 TO WS-TOT-EMPLOYEE     
+       END-READ.                              
+ 2000-PROCESS-PARA.                           
+      PERFORM 3000-MOVE-PARA.                
+      IF LINE-COUNT > USER-COUNT                 
+         
+         PERFORM 2500-HEADING-PARA           
+      END-IF
+      PERFORM 3500-PROCESS1-PARA                                 
+      WRITE OUT-RECORD FROM DETAIL-LINE.     
+      ADD 1 TO LINE-COUNT.                   
+      PERFORM 1500-READ-PARA.                
+ 2500-HEADING-PARA.                           
+      ADD 1 TO PAGE-COUNT.                   
+      MOVE PAGE-COUNT TO PAGENO.             
+      WRITE OUT-RECORD FROM HEADING-LINE1    
+             AFTER ADVANCING PAGE                  
+      WRITE OUT-RECORD FROM HEADING-LINE2         
+      WRITE OUT-RECORD FROM HEADING-LINE3         
+            AFTER ADVANCING 2 LINES.              
+ 3000-MOVE-PARA.                                   
+      ADD 1 TO WS-TECH-TOTAL-EMP
+      MOVE EMP-ID TO P-ID.                        
+      MOVE EMP-NAME TO P-NAME.                    
+      MOVE EMP-LOC TO P-LOC.                      
+      MOVE EMP-TECH TO P-TECH.                    
+      MOVE EMP-EARN TO P-EARN.                    
+      MOVE EMP-DEDN TO P-DEDN.                    
+      MOVE CORR EMP-DOB TO P-DOB.                 
+      COMPUTE WS-SAL = EMP-EARN - EMP-DEDN        
+      MOVE WS-SAL TO P-SAL.                       
+      ADD WS-SAL TO WS-TECH-TOTAL-SAL.                 
+      ADD EMP-EARN TO WS-TECH-TOTAL-EARN.              
+      ADD EMP-DEDN TO WS-TECH-TOTAL-DEDN.              
+ 3500-PROCESS1-PARA.
+      IF EMP-LOC = TEMP-LOC
+         IF EMP-TECH = TEMP-TECH
+             NEXT SENTENCE
+         ELSE 
+             PERFORM 5000-TECH-CHANGE-PARA
+         END-IF
+      ELSE
+         PERFORM 5000-TECH-CHANGE-PARA
+         PERFORM 5500-LOC-CHANGE-PARA
+      END-IF.
+      PERFORM 1500-READ-PARA.   
+ 4000-TOTAL-PARA.                                  
+       WRITE OUT-RECORD FROM LAST-DISPLAY. 
+ 5000-TECH-CHANGE-PARA.
+      MOVE WS-TECH-TOTAL-EARN TO TECH-DISPLAY-EARN
+      MOVE WS-TECH-TOTAL-SAL  TO TECH-DISPLAY-SAL
+      MOVE WS-TECH-TOTAL-DEDN TO TECH-DISPLAY-DEDN
+      MOVE WS-TECH-TOTAL-EMP  TO TECH-DISPLAY-EMP
+      WRITE OUT-RECORD FROM TECH-DISPLAY
+      ADD  WS-TECH-TOTAL-EARN TO WS-LOC-TOTAL-EARN
+      ADD  WS-TECH-TOTAL-SAL  TO WS-LOC-TOTAL-SAL 
+      ADD  WS-TECH-TOTAL-DEDN TO WS-LOC-TOTAL-DEDN
+      ADD  WS-TECH-TOTAL-EMP  TO WS-LOC-TOTAL-EMP
+      MOVE ZERO TO                                            
+             WS-TECH-TOTAL-EARN,
+             WS-TECH-TOTAL-SAL,
+             WS-TECH-TOTAL-DEDN,
+             WS-TECH-TOTAL-EMP. 
+ 5500-LOC-CHANGE-PARA.
+      MOVE WS-LOC-TOTAL-EARN TO LOC-DISPLAY-EARN
+      MOVE WS-LOC-TOTAL-SAL  TO LOC-DISPLAY-SAL
+      MOVE WS-LOC-TOTAL-DEDN TO LOC-DISPLAY-DEDN
+      MOVE WS-LOC-TOTAL-EMP  TO LOC-DISPLAY-EMP
+      WRITE OUT-RECORD FROM LOC-DISPLAY
+      ADD  WS-LOC-TOTAL-EARN TO WS-TOTAL-EARN
+      ADD  WS-LOC-TOTAL-SAL  TO WS-TOTAL-SAL 
+      ADD  WS-LOC-TOTAL-DEDN TO WS-TOTAL-DEDN
+      ADD  WS-LOC-TOTAL-EMP  TO WS-TOTAL-EMP
+      MOVE ZERO TO                                            
+             WS-LOC-TOTAL-EARN,
+             WS-LOC-TOTAL-SAL,
+             WS-LOC-TOTAL-DEDN,
+             WS-LOC-TOTAL-EMP.             
+ 8500-TOTALS-DISPLAY.
+      MOVE WS-TOTAL-EARN TO DISPLAY-EARN
+      MOVE WS-TOTAL-SAL  TO DISPLAY-SAL
+      MOVE WS-TOTAL-DEDN TO DISPLAY-DEDN
+      MOVE WS-TOTAL-EMP  TO DISPLAY-EMP
+      WRITE OUT-RECORD FROM LAST-DISPLAY.
+      
+ 9000-END-PARA.                            
+      PERFORM 4000-TOTAL-PARA.            
+      CLOSE EMP-FILE.                     
+      CLOSE OUT-FILE.                     .       

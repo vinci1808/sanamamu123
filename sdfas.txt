@@ -1,0 +1,41 @@
+**************************** Top of Data ********************************
+IDENTIFICATION DIVISION.                      
+PROGRAM-ID. PROG14.                           
+DATA DIVISION.                                
+WORKING-STORAGE SECTION.                      
+01  WS-INPUTS.                                
+    03  WS-A           PIC 9(02).             
+    03  WS-B           PIC 9(02).             
+01  WS-OUTPUTS.                               
+    03  WS-C           PIC 9(04)   VALUE ZERO.
+    03  WS-D           PIC 9(04)   VALUE ZERO.
+    03  WS-E           PIC 9(04)   VALUE ZERO.
+    03  WS-F           PIC 9(04)   VALUE ZERO.
+PROCEDURE DIVISION.                           
+    ACCEPT WS-INPUTS                          
+    PERFORM UNTIL WS-INPUTS = 'XXXX'          
+        IF WS-A IS NUMERIC AND WS-B IS NUMERIC
+           PERFORM PARA1                                     
+        ELSE                                                 
+           DISPLAY 'INPUTS ARE NON NUMERIC - NUMERIC CHECK ' 
+        END-IF                                               
+        ACCEPT WS-INPUTS                                     
+    END-PERFORM.                                             
+    DISPLAY 'END OF DATA'                                    
+    STOP RUN.                                                
+PARA1.                                                       
+    ADD WS-A WS-B GIVING WS-C                                
+    DISPLAY 'SUMC = ' , WS-C                                 
+    SUBTRACT WS-A FROM WS-B GIVING WS-D                      
+    DISPLAY 'SUBC = ' , WS-D                                 
+    MULTIPLY WS-A BY WS-B GIVING WS-E        
+    DISPLAY 'PRODC = ' , WS-E                
+    IF WS-B = ZERO                           
+       DISPLAY 'ZERO DIVIDE NOT POSSIBLE'    
+    ELSE                                     
+       DIVIDE WS-A BY WS-B GIVING WS-F       
+    DISPLAY 'DIVC = ' , WS-F                 
+    END-IF.                                  
+                                             
+*************************** Bottom of Data *******************************
+                                             

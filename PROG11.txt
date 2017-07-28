@@ -1,0 +1,118 @@
+ IDENTIFICATION DIVISION.
+ PROGRAM-ID. PROG11.
+ ENVIRONMENT DIVISION.
+ INPUT-OUTPUT SECTION.
+ FILE-CONTROL.
+     SELECT EMPLOYEE-FILE ASSIGN TO 'EMPFILE.DAT'
+          ORGANIZATION IS SEQUENTIAL
+          ACCESS MODE IS SEQUENTIAL
+          FILE STATUS IS WS-FILE-STAT.
+ DATA DIVISION.
+ FILE SECTION.
+ FD  EMPLOYEE-FILE
+     RECORD CONTAINS 50 CHARACTERS
+     RECORDING MODE IS F.
+ 01  EMPLOYEE-RECORD.
+     03 EMP-ID          PIC X(05).
+     03 EMP-NAME        PIC X(15).
+     03 EMP-LOC         PIC X(03).
+     03 EMP-DOB.
+        04  EMP-DOB-Y   PIC X(04).
+        04  EMP-DOB-M   PIC X(02).
+        04  EMP-DOB-D   PIC X(02).
+     03 EMP-TECH        PIC X(05).
+     03 EMP-EARN        PIC 9(05)V99.
+     03 EMP-DEDN        PIC 9(05)V99.
+ WORKING-STORAGE SECTION.
+ 01  EMPLOYEE-RECORD1.
+     03 EMP-ID-O        PIC X(05).
+     03 FILLER          PIC X(01)        VALUE ' '.
+     03 EMP-NAME-O      PIC X(15).
+     03 EMP-LOC-O       PIC X(03).
+     03 FILLER          PIC X(01)        VALUE ' '.
+     03 EMP-DOB-0.
+        04 EMP-DOB-D-O     PIC X(02).
+        04 FILLER          PIC X(01)        VALUE '/'.
+        04 EMP-DOB-M-O     PIC X(02).
+        04 FILLER          PIC X(01)        VALUE '/'.
+        04 EMP-DOB-Y-O     PIC X(04).
+     03 FILLER          PIC X(01)        VALUE ' '.
+     03 EMP-TECH-O      PIC X(05).
+     03 EMP-EARN-O      PIC ZZ,ZZ9.99.
+     03 FILLER          PIC X(03)        VALUE '   '.
+     03 EMP-DEDN-O      PIC ZZ,ZZ9.99.
+     03 FILLER          PIC X(03)        VALUE '   '.
+     03 EMP-SAL-O       PIC ZZ,ZZ9.99.
+ 01  EMP-TEARN-O      PIC $ZZZ,ZZ9.99.
+ 01  EMP-TDEDN-O      PIC $ZZ,ZZ9.99.
+ 01  EMP-TSAL-O       PIC $ZZZ,ZZ9.99.
+ 01  EMP-SAL            PIC 9(05)V99.
+ 01  EMP-TEARN          PIC 9(06)V99    VALUE ZERO.
+ 01  EMP-TDEDN          PIC 9(06)V99    VALUE ZERO.
+ 01  EMP-TSAL           PIC 9(06)V99    VALUE ZERO.
+ 01  WS-FILE-STAT       PIC X(02).
+     88  OPEN-SUCCESS                VALUE '00'.
+ 01  WS-FILE-FLAG       PIC X(02)    VALUE 'NN'.
+     88  END-OF-FILE                 VALUE '10'.
+ 01  COUNTI             PIC 9(02)    VALUE ZERO.
+ PROCEDURE DIVISION.
+ MAIN-PARA.
+     PERFORM 1000-INIT-PARA
+     PERFORM 1500-READ-PARA
+     PERFORM 2000-PROCESS-PARA UNTIL  END-OF-FILE
+     PERFORM 4000-END-PARA
+     STOP RUN.
+*
+ 1000-INIT-PARA.
+     OPEN INPUT EMPLOYEE-FILE
+     IF OPEN-SUCCESS
+     DISPLAY 'FILE OPEN SUCCESS - 00'
+     DISPLAY '=====================================',
+             '====================================='
+     DISPLAY 'ID    NAME           LOC DOB        TECH EARNING ',
+             '     DEDUCTION  TOTAL SAL'
+     DISPLAY '-------------------------------------',
+             '-------------------------------------'
+     END-IF.
+*
+ 1500-READ-PARA.
+     READ EMPLOYEE-FILE
+        AT END
+           MOVE '10' TO WS-FILE-FLAG
+     END-READ.
+*
+ 2000-PROCESS-PARA.
+     PERFORM 3000-COPY
+     DISPLAY EMPLOYEE-RECORD1
+     ADD 1 TO COUNTI
+     PERFORM 1500-READ-PARA.
+*
+ 3000-COPY.
+     MOVE EMP-ID TO EMP-ID-O
+     MOVE EMP-NAME TO EMP-NAME-O
+     MOVE EMP-LOC TO EMP-LOC-O
+     MOVE EMP-TECH TO EMP-TECH-O
+     MOVE EMP-EARN TO EMP-EARN-O
+     MOVE EMP-DEDN TO EMP-DEDN-O
+     MOVE EMP-TEARN TO EMP-TEARN-O
+     MOVE EMP-TDEDN TO EMP-TDEDN-O
+     MOVE EMP-TSAL TO EMP-TSAL-O
+     SUBTRACT EMP-DEDN FROM EMP-EARN GIVING EMP-SAL
+     MOVE EMP-SAL TO EMP-SAL-O
+     MOVE EMP-DOB-Y TO EMP-DOB-Y-O
+     MOVE EMP-DOB-M TO EMP-DOB-M-O
+     MOVE EMP-DOB-D TO EMP-DOB-D-O
+     ADD EMP-EARN TO EMP-TEARN
+     ADD EMP-DEDN TO EMP-TDEDN
+     ADD EMP-SAL TO EMP-TSAL.
+*
+ 4000-END-PARA.
+     CLOSE EMPLOYEE-FILE
+     DISPLAY '-------------------------------------',
+             '-------------------------------------'
+     DISPLAY 'END FILE REACHED - ', WS-FILE-FLAG
+     DISPLAY '-------------------------------------',
+             '-------------------------------------'
+     DISPLAY 'TOTAL EMP = ', COUNTI, '  ',
+             '                       ', EMP-TEARN-O, '  ',
+             EMP-TDEDN-O, ' ', EMP-TSAL-O.
